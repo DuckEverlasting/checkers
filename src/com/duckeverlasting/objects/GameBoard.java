@@ -1,6 +1,5 @@
 package com.duckeverlasting.objects;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GameBoard
@@ -62,5 +61,7 @@ public class GameBoard
                 it becomes a king.
             - when all actions are done, end the turn. (check for win condition here)
         - that's pretty much it, actually.
+        - maybe make a way to print out the board on the console :D
+        - String data = console.readLine("<PROMPT TEXT>");
     */
 }
