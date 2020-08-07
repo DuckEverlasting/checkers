@@ -5,27 +5,47 @@ import java.util.Arrays;
 public class GameBoard
 {
     private int[] state;
-    private int turnCounter;
+    private int turn;
     private GamePiece[] gamePieces;
     private int[] score;
-    private MoveGenerator moveGenerator;
+    private ActionGenerator moveGenerator;
 
     private int activePiece = -1;
 
     public GameBoard()
     {
         state = new int[32];
-        turnCounter = 0;
+        turn = 0;
         score = new int[]{0, 0};
         gamePieces = new GamePiece[24];
-        moveGenerator = new MoveGenerator(this);
-        Arrays.fill(state, 12, 19, 0);
-        for (int i = 1; i <= 12; i++) {
+        moveGenerator = new ActionGenerator(this);
+        Arrays.fill(state, 12, 19, -1);
+        for (int i = 0; i < 12; i++) {
             gamePieces[i] = new GamePiece(i, 0, i);
         }
-        for (int i = 13; i <= 24; i++) {
+        for (int i = 12; i < 24; i++) {
             gamePieces[i] = new GamePiece(i, 1, i + 6);
         }
+    }
+
+    public GamePiece[] getGamePieces()
+    {
+        return gamePieces;
+    }
+
+    public int getTurn()
+    {
+        return turn;
+    }
+
+    public int[] getState()
+    {
+        return state;
+    }
+
+    public void setState(int[] state)
+    {
+        this.state = state;
     }
 
     private void checkIfGameOver()

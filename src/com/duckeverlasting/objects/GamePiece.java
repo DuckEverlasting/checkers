@@ -1,9 +1,5 @@
 package com.duckeverlasting.objects;
 
-import com.duckeverlasting.interfaces.Action;
-
-import java.util.ArrayList;
-
 public class GamePiece
 {
     int id;
@@ -23,7 +19,7 @@ public class GamePiece
         return id;
     }
 
-    public int getTeam()
+    public int getPlayer()
     {
         return team;
     }

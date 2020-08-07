@@ -4,41 +4,6 @@ import com.duckeverlasting.enums.Direction;
 
 public class Utils
 {
-    public int look(int origin, Direction direction)
-    {
-        boolean offset = origin % 8 < 4;
-        int destination;
-        switch (direction)
-        {
-            case UP_LEFT ->
-            if (isAtTop(origin) || isAtLeftEdge(origin))
-            {
-                return -1;
-            } else
-            {
-
-            }
-            destination = 0;
-            case UP_RIGHT ->
-                    destination = 0;
-            case DOWN_RIGHT ->
-                    destination = 0;
-            case DOWN_LEFT ->
-                    destination = 0;
-            case TWO_UP_LEFT ->
-                    destination = 0;
-            case TWO_UP_RIGHT ->
-                    destination = 0;
-            case TWO_DOWN_RIGHT ->
-                    destination = 0;
-            case TWO_DOWN_LEFT ->
-                    destination = 0;
-            default -> destination = -1;
-        }
-        return destination;
-
-    }
-
     private boolean isAtLeftEdge(int origin)
     {
         return origin % 4 == 0;
@@ -58,44 +23,52 @@ public class Utils
     {
         return origin > 27;
     }
-
-    public static int getUpLeft(int origin) {
-        if (origin % 4 == 0 || origin < 4) {
+    public static int getNeighbor(int origin, Direction direction)
+    {
+        if (origin == -1)
+        {
             return -1;
-        } else if (origin % 8 < 4) {
-            return origin - 4;
-        } else {
-            return origin - 5;
         }
-    }
+        int offset = origin % 8 < 4 ? 1 : 0;
+        int destination;
+        switch (direction)
+        {
+            case UP_LEFT ->
+                if (isAtTop(origin) || isAtLeftEdge(origin))
+                {
+                    destination = -1;
+                } else
+                {
+                    destination = origin - 5 + offset;
+                }
+              destination = 0;
+            case UP_RIGHT ->
+                if (isAtTop(origin) || isAtRightEdge(origin))
+                {
+                    destination = -1;
+                } else
+                {
+                    destination = origin - 4 + offset;
+                }
+            case DOWN_RIGHT ->
+                if (isAtBottom(origin) || isAtRightEdge(origin))
+                {
+                    destination = -1;
+                } else
+                {
+                    destination = origin + 4 + offset;
+                }
+            case DOWN_LEFT ->
+                if (isAtBottom(origin) || isAtLeftEdge(origin))
+                {
+                    destination = -1;
+                } else
+                {
+                    destination = origin + 3 + offset;
+                }
+            default -> destination = -1;
+        }
+        return destination;
 
-    public static int getUpRight(int origin) {
-        if (origin % 4 == 3 || origin < 4) {
-            return -1;
-        } else if (origin % 8 < 4) {
-            return origin - 3;
-        } else {
-            return origin - 4;
-        }
-    }
-
-    public static int getDownLeft(int origin) {
-        if (origin % 4 == 0 || origin > 27) {
-            return -1;
-        } else if (origin % 8 < 4) {
-            return origin + 4;
-        } else {
-            return origin + 3;
-        }
-    }
-
-    public static int getDownRight(int origin) {
-        if (origin % 4 == 3 || origin > 27) {
-            return -1;
-        } else if (origin % 8 < 4) {
-            return origin + 5;
-        } else {
-            return origin + 4;
-        }
     }
 }
