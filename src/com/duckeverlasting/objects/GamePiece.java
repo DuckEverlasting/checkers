@@ -11,10 +11,10 @@ public class GamePiece
     int position;
     boolean isKing;
 
-    public GamePiece(int id, int team, int position)
+    public GamePiece(int id, int player, int position)
     {
         this.id = id;
-        this.team = team;
+        this.team = player;
         this.position = position;
     }
 
@@ -47,14 +47,4 @@ public class GamePiece
     {
         this.isKing = isKing;
     }
-
-    public ArrayList<Action> getPossibleActions() {
-        ArrayList<Action> result = new ArrayList();
-        return result;
-    }
-
-//    public act(Action action)
-//    {
-//        action.act()
-//    }
 }
