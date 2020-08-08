@@ -3,14 +3,14 @@ package com.duckeverlasting.objects;
 public class GamePiece
 {
     int id;
-    int team;
+    int player;
     int position;
-    boolean isKing;
+    boolean king;
 
     public GamePiece(int id, int player, int position)
     {
         this.id = id;
-        this.team = player;
+        this.player = player;
         this.position = position;
     }
 
@@ -21,7 +21,7 @@ public class GamePiece
 
     public int getPlayer()
     {
-        return team;
+        return player;
     }
 
     public int getPosition()
@@ -34,13 +34,24 @@ public class GamePiece
         this.position = position;
     }
 
-    public boolean getIsKing()
+    public boolean isKing()
     {
-        return isKing;
+        return king;
     }
 
-    public void setIsKing(boolean isKing)
+    public void setKing(boolean king)
     {
-        this.isKing = isKing;
+        this.king = king;
+    }
+
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", player='" + getPlayer() + "'" +
+            ", position='" + getPosition() + "'" +
+            ", isKing='" + isKing() + "'" +
+            "}";
     }
 }

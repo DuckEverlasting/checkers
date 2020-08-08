@@ -4,22 +4,43 @@ import com.duckeverlasting.enums.ActionType;
 
 public class Action {
     private ActionType type;
-    private GamePiece toMove;
-    private GamePiece toRemove;
+    private int origin;
     private int destination;
 
-    Action(GamePiece toMove, int destination)
+    public Action(ActionType type, int origin, int destination)
     {
-        this.type = ActionType.MOVE;
-        this.toMove = toMove;
+        this.type = type;
+        this.origin = origin;
         this.destination = destination;
     }
     
-    Action(GamePiece toMove, int destination, GamePiece toRemove)
-    {
-        this.type = ActionType.JUMP;
-        this.toMove = toMove;
-        this.destination = destination;
-        this.toRemove = toRemove;
+
+    public ActionType getType() {
+        return this.type;
     }
+
+    public int getOrigin() {
+        return this.origin;
+    }
+
+    public int getDestination() {
+        return this.destination;
+    }
+
+    public boolean isEqualTo(Action action) {
+        return action.getType() == type &&
+            action.getOrigin() == origin &&
+            action.getDestination() == destination;
+    }
+
+
+    @Override
+    public String toString() {
+        return "{" +
+            " type='" + getType() + "'" +
+            ", origin='" + getOrigin() + "'" +
+            ", destination='" + getDestination() + "'" +
+            "}";
+    }
+
 }

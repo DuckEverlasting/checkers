@@ -1,28 +1,31 @@
 package com.duckeverlasting;
 
+import com.duckeverlasting.enums.ActionType;
 import com.duckeverlasting.enums.Direction;
+import com.duckeverlasting.objects.Action;
 
 public class Utils
 {
-    private boolean isAtLeftEdge(int origin)
+    private static boolean isAtLeftEdge(int origin)
     {
         return origin % 4 == 0;
     }
 
-    private boolean isAtRightEdge(int origin)
+    private static boolean isAtRightEdge(int origin)
     {
         return origin % 4 == 3;
     }
 
-    private boolean isAtTop(int origin)
+    private static boolean isAtTop(int origin)
     {
         return origin < 4;
     }
 
-    private boolean isAtBottom(int origin)
+    private static boolean isAtBottom(int origin)
     {
         return origin > 27;
     }
+
     public static int getNeighbor(int origin, Direction direction)
     {
         if (origin == -1)
@@ -33,7 +36,7 @@ public class Utils
         int destination;
         switch (direction)
         {
-            case UP_LEFT ->
+            case UP_LEFT:
                 if (isAtTop(origin) || isAtLeftEdge(origin))
                 {
                     destination = -1;
@@ -41,8 +44,8 @@ public class Utils
                 {
                     destination = origin - 5 + offset;
                 }
-              destination = 0;
-            case UP_RIGHT ->
+                break;
+            case UP_RIGHT:
                 if (isAtTop(origin) || isAtRightEdge(origin))
                 {
                     destination = -1;
@@ -50,7 +53,8 @@ public class Utils
                 {
                     destination = origin - 4 + offset;
                 }
-            case DOWN_RIGHT ->
+                break;
+            case DOWN_RIGHT:
                 if (isAtBottom(origin) || isAtRightEdge(origin))
                 {
                     destination = -1;
@@ -58,7 +62,8 @@ public class Utils
                 {
                     destination = origin + 4 + offset;
                 }
-            case DOWN_LEFT ->
+                break;
+            case DOWN_LEFT:
                 if (isAtBottom(origin) || isAtLeftEdge(origin))
                 {
                     destination = -1;
@@ -66,9 +71,56 @@ public class Utils
                 {
                     destination = origin + 3 + offset;
                 }
-            default -> destination = -1;
+                break;
+            default: destination = -1;
         }
         return destination;
+    }
 
+    public static int getBetween(int origin, int destination)
+    {
+        if (destination + 7 == origin)
+        {
+            return getNeighbor(origin, Direction.UP_LEFT);
+        } else if (destination + 9 == origin)
+        {
+            return getNeighbor(origin, Direction.UP_RIGHT);
+        } else if (destination - 9 == origin)
+        {
+            return getNeighbor(origin, Direction.DOWN_RIGHT);
+        } else if (destination - 7 == origin)
+        {
+            return getNeighbor(origin, Direction.DOWN_LEFT);
+        }
+        return -1;
+    }
+    
+    public static Action parseInput(String input)
+    {
+        String[] array = input.split(" ");
+        int origin;
+        ActionType type;
+        int destination;
+        try
+        {
+            origin = Integer.parseInt(array[0]);
+            if (array[1].equalsIgnoreCase("MOVE"))
+            {
+                type = ActionType.MOVE; 
+            } else if (array[1].equalsIgnoreCase("JUMP"))
+            {
+                type = ActionType.MOVE;
+            } else {
+                throw new Exception("move or jump");
+            }
+            destination = Integer.parseInt(array[2]);
+        }
+        catch(Exception err)
+        {
+            System.out.println(err);
+            String newInput = System.console().readLine("TRY AGAIN: ");
+            return parseInput(newInput);
+        }
+        return new Action(type, origin, destination);
     }
 }
