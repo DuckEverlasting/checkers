@@ -3,41 +3,45 @@ package com.duckeverlasting.objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.duckeverlasting.Utils;
+import com.duckeverlasting.Helpers;
 
-public class GameBoard
+public class Game
 {
-    private final int[] state;
+    private final int[] gameBoard;
     private final GamePiece[] gamePieces;
     private int turn;
     private final int[] remainingPieces;
     private ActionFinder actionFinder;
     private ActionExecutor actionExecutor;
+    private ActionValidator actionValidator;
+    private InputParser inputParser;
     private Printer printer;
 
-    public GameBoard()
+    public Game()
     {
-        state = new int[32];
+        gameBoard = new int[32];
         turn = 0;
         remainingPieces = new int[]{12, 12};
         gamePieces = new GamePiece[24];
         actionFinder = new ActionFinder(this);
         actionExecutor = new ActionExecutor(this);
+        actionValidator = new ActionValidator(this);
+        inputParser = new InputParser(this);
         printer = new Printer(this);
-        Arrays.fill(state, 12, 20, -1);
+        Arrays.fill(gameBoard, 12, 20, -1);
         for (int i = 0; i < 12; i++) {
             gamePieces[i] = new GamePiece(i, 1, i);
-            state[i] = i;
+            gameBoard[i] = i;
         }
         for (int i = 12; i < 24; i++) {
-            gamePieces[i] = new GamePiece(i, 0, i + 6);
-            state[i + 8] = i;
+            gamePieces[i] = new GamePiece(i, 0, i + 8);
+            gameBoard[i + 8] = i;
         }
     }
 
-    public int[] getState()
+    public int[] getgameBoard()
     {
-        return state;
+        return gameBoard;
     }
 
     public GamePiece[] getGamePieces()
@@ -75,22 +79,30 @@ public class GameBoard
         turn++;
     }
 
+    public boolean isValidAction(Action action)
+    {
+        return actionValidator.isValidAction(action);
+    }
+
     public Action getActionInput()
     {
         int currentPlayer = turn % 2;
         ArrayList<Action> actions = actionFinder.getAllActions(currentPlayer);
-        System.out.println(actions.size() + " MOVES AVAILABLE.");
-        String input = System.console().readLine("YOUR MOVE, PLAYER " + (currentPlayer + 1) + ": ");
-        Action parsedAction = Utils.parseInput(input);
-        boolean test = false;
-        System.out.println("RECIEVED: " + parsedAction.toString());
         for (Action action : actions)
         {
-            System.out.println("MATCHING TO: " + action.toString());
-        
+            System.out.println(action);
+            System.out.println("PIECE: " + gameBoard[action.getOrigin()]);
+        }
+        System.out.println(actions.size() + " MOVES AVAILABLE.");
+        String input = System.console().readLine("YOUR MOVE, PLAYER " + (currentPlayer + 1) + ": ");
+        Action parsedAction = inputParser.parseInput(input);
+        boolean test = false;
+        for (Action action : actions)
+        {
             if (action.isEqualTo(parsedAction))
             {
                 test = true;
+                break;
             }
         }
         if (test == true)
@@ -104,7 +116,7 @@ public class GameBoard
     }
 
     /* what do we have so far?
-        - we have a gameboard and pieces. The gameboard constructor sets up all the state we need, I believe.
+        - we have a Game and pieces. The Game constructor sets up all the gameBoard we need, I believe.
         - we have the ability to get the destinations of moves (not jumps yet)
         - we have structure in place (but no logic yet) for where we'll call turns and where we'll check for
             available moves

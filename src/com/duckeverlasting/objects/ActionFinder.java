@@ -2,17 +2,17 @@ package com.duckeverlasting.objects;
 
 import java.util.ArrayList;
 
-import com.duckeverlasting.Utils;
+import com.duckeverlasting.Helpers;
 import com.duckeverlasting.enums.ActionType;
 import com.duckeverlasting.enums.Direction;
 
 public class ActionFinder
 {
-    private GameBoard gameBoard;
+    private Game game;
 
-    public ActionFinder(GameBoard gameBoard)
+    public ActionFinder(Game game)
     {
-        this.gameBoard = gameBoard;
+        this.game = game;
     }
 
 
@@ -22,72 +22,16 @@ public class ActionFinder
         int start = player == 0 ? 12 : 0;
         for (int i = start; i < start + 12; i++)
         {
-            GamePiece gamePiece = this.gameBoard.getGamePieces()[i];
-            actions.addAll(getActions(gamePiece));
+            GamePiece gamePiece = game.getGamePieces()[i];
+            actions.addAll(getActions(gamePiece.getPosition(), ActionType.JUMP));
         }
-        for (Action action : actions)
-        {
-            System.out.println("FOUND: " + action);
+        if (actions.size() > 0) {
+            return actions;
         }
-        return actions;
-    }
-
-    public ArrayList<Action> getActions(GamePiece gamePiece)
-    {
-        ArrayList<Action> actions = new ArrayList<>();
-        if (gamePiece.getPlayer() == 0 || gamePiece.isKing())
+        for (int i = start; i < start + 12; i++)
         {
-            int upLeft = Utils.getNeighbor(gamePiece.getPosition(), Direction.UP_LEFT);
-            int upRight = Utils.getNeighbor(gamePiece.getPosition(), Direction.UP_RIGHT);
-            int twoUpLeft = Utils.getNeighbor(upLeft, Direction.UP_LEFT);
-            int twoUpRight = Utils.getNeighbor(upRight, Direction.UP_RIGHT);
-            Action moveUpLeft = new Action(ActionType.MOVE, gamePiece.getPosition(), upLeft);
-            if (isValidAction(moveUpLeft))
-            {
-                actions.add(moveUpLeft);
-            }
-            Action moveUpRight = new Action(ActionType.MOVE, gamePiece.getPosition(), upRight);
-            if (isValidAction(moveUpRight))
-            {
-                actions.add(moveUpRight);
-            }
-            Action jumpUpLeft = new Action(ActionType.JUMP, gamePiece.getPosition(), twoUpLeft);
-            if (isValidAction(jumpUpLeft))
-            {
-                actions.add(jumpUpLeft);
-            }
-            Action jumpUpRight = new Action(ActionType.JUMP, gamePiece.getPosition(), twoUpRight);
-            if (isValidAction(jumpUpRight))
-            {
-                actions.add(jumpUpRight);
-            }
-        }
-        if (gamePiece.getPlayer() == 1 || gamePiece.isKing())
-        {
-            int downLeft = Utils.getNeighbor(gamePiece.getPosition(), Direction.DOWN_LEFT);
-            int downRight = Utils.getNeighbor(gamePiece.getPosition(), Direction.DOWN_RIGHT);
-            int twoDownLeft = Utils.getNeighbor(downLeft, Direction.DOWN_LEFT);
-            int twoDownRight = Utils.getNeighbor(downRight, Direction.DOWN_RIGHT);
-            Action moveDownLeft = new Action(ActionType.MOVE, gamePiece.getPosition(), downLeft);
-            if (isValidAction(moveDownLeft))
-            {
-                actions.add(moveDownLeft);
-            }
-            Action moveDownRight = new Action(ActionType.MOVE, gamePiece.getPosition(), downRight);
-            if (isValidAction(moveDownRight))
-            {
-                actions.add(moveDownRight);
-            }
-            Action jumpDownLeft = new Action(ActionType.JUMP, gamePiece.getPosition(), twoDownLeft);
-            if (isValidAction(jumpDownLeft))
-            {
-                actions.add(jumpDownLeft);
-            }
-            Action jumpDownRight = new Action(ActionType.JUMP, gamePiece.getPosition(), twoDownRight);
-            if (isValidAction(jumpDownRight))
-            {
-                actions.add(jumpDownRight);
-            }
+            GamePiece gamePiece = game.getGamePieces()[i];
+            actions.addAll(getActions(gamePiece.getPosition(), ActionType.MOVE));
         }
         return actions;
     }
@@ -95,80 +39,46 @@ public class ActionFinder
     public ArrayList<Action> getActions(int origin, ActionType type)
     {
         ArrayList<Action> actions = new ArrayList<>();
-        int id = gameBoard.getState()[origin];
+        int id = game.getgameBoard()[origin];
         if (id == -1)
         {
             return actions;
         }
-        GamePiece gamePiece = gameBoard.getGamePieces()[id];
+        GamePiece gamePiece = game.getGamePieces()[id];
         if (gamePiece.getPlayer() == 0 || gamePiece.isKing())
         {
-            int upLeft = Utils.getNeighbor(gamePiece.getPosition(), Direction.UP_LEFT);
-            int upRight = Utils.getNeighbor(gamePiece.getPosition(), Direction.UP_RIGHT);
-            int twoUpLeft = Utils.getNeighbor(upLeft, Direction.UP_LEFT);
-            int twoUpRight = Utils.getNeighbor(upRight, Direction.UP_RIGHT);
+            int upLeft = Helpers.getNeighbor(origin, Direction.UP_LEFT);
+            int upRight = Helpers.getNeighbor(origin, Direction.UP_RIGHT);
+            int twoUpLeft = Helpers.getNeighbor(upLeft, Direction.UP_LEFT);
+            int twoUpRight = Helpers.getNeighbor(upRight, Direction.UP_RIGHT);
             Action actUpRight = new Action(type, origin, type == ActionType.JUMP ? twoUpRight : upRight);
-            if (isValidAction(actUpRight))
+            if (game.isValidAction(actUpRight))
             {
                 actions.add(actUpRight);
             }
             Action actUpLeft = new Action(type, origin, type == ActionType.JUMP ? twoUpLeft : upLeft);
-            if (isValidAction(actUpLeft))
+            if (game.isValidAction(actUpLeft))
             {
                 actions.add(actUpLeft);
             }
         }
         if (gamePiece.getPlayer() == 1 || gamePiece.isKing())
         {
-            int downLeft = Utils.getNeighbor(gamePiece.getPosition(), Direction.DOWN_LEFT);
-            int downRight = Utils.getNeighbor(gamePiece.getPosition(), Direction.DOWN_RIGHT);
-            int twoDownLeft = Utils.getNeighbor(downLeft, Direction.DOWN_LEFT);
-            int twoDownRight = Utils.getNeighbor(downRight, Direction.DOWN_RIGHT);
+            int downLeft = Helpers.getNeighbor(origin, Direction.DOWN_LEFT);
+            int downRight = Helpers.getNeighbor(origin, Direction.DOWN_RIGHT);
+            int twoDownLeft = Helpers.getNeighbor(downLeft, Direction.DOWN_LEFT);
+            int twoDownRight = Helpers.getNeighbor(downRight, Direction.DOWN_RIGHT);
             Action actDownRight = new Action(type, origin, type == ActionType.JUMP ? twoDownRight : downRight);
-            if (isValidAction(actDownRight))
+            if (game.isValidAction(actDownRight))
             {
                 actions.add(actDownRight);
             }
             Action actDownLeft = new Action(type, origin, type == ActionType.JUMP ? twoDownLeft : downLeft);
-            if (isValidAction(actDownLeft))
+            if (game.isValidAction(actDownLeft))
             {
                 actions.add(actDownLeft);
             }
         }
         return actions;
-    }
-
-    private boolean isValidAction(ActionType type, int origin, int destination)
-    {
-        if (gameBoard.getState()[origin] == -1)
-        {
-            return false;
-        }
-        GamePiece gamePiece = gameBoard.getGamePieces()[gameBoard.getState()[origin]];
-        if (type == ActionType.MOVE)
-        {
-            if (destination != -1 && this.gameBoard.getState()[destination] == -1)
-            {
-                return true;
-            }
-        } else if (type == ActionType.JUMP)
-        {
-            int target = Utils.getBetween(origin, destination);
-            if (target == -1 || gameBoard.getState()[target] == -1)
-            {
-                return false;
-            }
-            GamePiece targetGamePiece = gameBoard.getGamePieces()[gameBoard.getState()[target]];
-            if (targetGamePiece.getPlayer() != gamePiece.player && destination != -1 && gameBoard.getState()[destination] != -1)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isValidAction(Action action)
-    {
-        return isValidAction(action.getType(), action.getOrigin(), action.getDestination());
     }
 }

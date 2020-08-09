@@ -2,51 +2,63 @@ package com.duckeverlasting.objects;
 
 public class Printer
 {
-    private GameBoard gameBoard;
+    private Game game;
+    
+    private static final String ANSI_RESET = "\u001b[0m";
+    private static final String ANSI_RED = "\u001b[31;1m";
+    private static final String ANSI_WHITE = "\u001b[37m";
+    private static final String ANSI_BLACK_BACKGROUND = "\u001b[40m";
+    private static final String ANSI_GREY_BACKGROUND = "\u001b[0m";
 
-    public Printer(GameBoard gameBoard)
+    public Printer(Game game)
     {
-        this.gameBoard = gameBoard;
+        this.game = game;
     }
 
     public void print()
     {
-        int[] state = gameBoard.getState();
-        GamePiece[] gamePieces = gameBoard.getGamePieces();
-        String output = "-------------------\n";
-        for (int i = 0; i < state.length; i++)
+        int[] gameBoard = game.getgameBoard();
+        GamePiece[] gamePieces = game.getGamePieces();
+        String output = "\n\n\n" + ANSI_BLACK_BACKGROUND + ANSI_WHITE + "  ________________________________  " + ANSI_RESET + "\n";
+        for (int i = 0; i < gameBoard.length; i++)
         {
+            int id = gameBoard[i];
+
             if (i % 4 == 0)
             {
-                output += "| ";
+                output += ANSI_BLACK_BACKGROUND + ANSI_WHITE + " |";
             }
 
             if (i % 8 < 4)
             {
-                output += "  ";
+                output += ANSI_GREY_BACKGROUND + "    ";
             }
 
-            if (state[i] == -1)
+            if (id == -1)
             {
-                output += "  ";
-            } else if (gamePieces[state[i]].getPlayer() == 0)
-            {
-                output += "X ";
+                output += ANSI_BLACK_BACKGROUND + "    ";
             } else {
-                output += "0 ";
+                String idString = id < 10 ? "0" + id : "" + id;
+                if (gamePieces[id].getPlayer() == 0) 
+                {
+                    output += ANSI_BLACK_BACKGROUND + ANSI_RED + " " + idString + " ";
+                } 
+                else {
+                    output += ANSI_BLACK_BACKGROUND + ANSI_WHITE + " " + idString + " ";
+                }
             }
 
             if (i % 8 >= 4)
             {
-                output += "  ";
+                output += ANSI_GREY_BACKGROUND + "    ";
             }
 
             if (i % 4 == 3)
             {
-                output += "|\n";
+                output += ANSI_BLACK_BACKGROUND + ANSI_WHITE + "| " + ANSI_RESET + "\n";
             }
         }
-        output += "-------------------\n";
+        output += ANSI_BLACK_BACKGROUND + ANSI_WHITE + "  ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅ ̅   " + ANSI_RESET + "\n";
         System.out.println(output);
     }
 }

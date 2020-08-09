@@ -1,19 +1,17 @@
 package com.duckeverlasting;
 
-import com.duckeverlasting.enums.ActionType;
 import com.duckeverlasting.enums.Direction;
-import com.duckeverlasting.objects.Action;
 
-public class Utils
+public class Helpers
 {
     private static boolean isAtLeftEdge(int origin)
     {
-        return origin % 4 == 0;
+        return origin % 8 == 4;
     }
 
     private static boolean isAtRightEdge(int origin)
     {
-        return origin % 4 == 3;
+        return origin % 8 == 3;
     }
 
     private static boolean isAtTop(int origin)
@@ -93,34 +91,5 @@ public class Utils
             return getNeighbor(origin, Direction.DOWN_LEFT);
         }
         return -1;
-    }
-    
-    public static Action parseInput(String input)
-    {
-        String[] array = input.split(" ");
-        int origin;
-        ActionType type;
-        int destination;
-        try
-        {
-            origin = Integer.parseInt(array[0]);
-            if (array[1].equalsIgnoreCase("MOVE"))
-            {
-                type = ActionType.MOVE; 
-            } else if (array[1].equalsIgnoreCase("JUMP"))
-            {
-                type = ActionType.MOVE;
-            } else {
-                throw new Exception("move or jump");
-            }
-            destination = Integer.parseInt(array[2]);
-        }
-        catch(Exception err)
-        {
-            System.out.println(err);
-            String newInput = System.console().readLine("TRY AGAIN: ");
-            return parseInput(newInput);
-        }
-        return new Action(type, origin, destination);
     }
 }

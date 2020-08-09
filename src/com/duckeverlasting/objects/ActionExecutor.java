@@ -1,33 +1,33 @@
 package com.duckeverlasting.objects;
 
-import com.duckeverlasting.Utils;
+import com.duckeverlasting.Helpers;
 import com.duckeverlasting.enums.ActionType;
 
 public class ActionExecutor {
-    private GameBoard gameBoard;
+    private Game game;
 
-    public ActionExecutor(GameBoard gameBoard)
+    public ActionExecutor(Game game)
     {
-        this.gameBoard = gameBoard;
+        this.game = game;
     }
 
     public void run(Action action)
     {
-        int[] state = gameBoard.getState();
+        int[] gameBoard = game.getgameBoard();
         int origin = action.getOrigin();
-        GamePiece toMove = gameBoard.getGamePieces()[state[origin]];
+        GamePiece toMove = game.getGamePieces()[gameBoard[origin]];
         int destination = action.getDestination();
-        state[origin] = -1;
-        state[destination] = toMove.getId();
+        gameBoard[origin] = -1;
+        gameBoard[destination] = toMove.getId();
         toMove.setPosition(destination);
         
         if (action.getType() == ActionType.JUMP)
         {
-            int target = Utils.getBetween(origin, destination);
-            GamePiece toRemove = gameBoard.getGamePieces()[state[target]];
-            state[target] = -1;
+            int target = Helpers.getBetween(origin, destination);
+            GamePiece toRemove = game.getGamePieces()[gameBoard[target]];
+            gameBoard[target] = -1;
             toMove.setPosition(-1);
-            int[] remainingPieces = gameBoard.getRemainingPieces();
+            int[] remainingPieces = game.getRemainingPieces();
             remainingPieces[toRemove.getPlayer()]--;
         }
     }
