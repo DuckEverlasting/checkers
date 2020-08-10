@@ -2,6 +2,8 @@ package com.duckeverlasting.objects;
 
 import java.util.ArrayList;
 
+import com.duckeverlasting.Helpers;
+
 public class Printer {
     private final Game  game;
 
@@ -36,16 +38,15 @@ public class Printer {
             if (id == -1) {
                 output += ANSI_BLACK_BACKGROUND + "    ";
             } else {
-                GamePiece gamePiece = game.getGamePiece(id);
-                int player = gamePiece.getPlayer();
-                String idString = id < 10 ? "0" + id : "" + id;
+                int player = Helpers.getPlayer(id);
+                String idString = (id % 24) < 10 ? "0" + (id % 24) : "" + (id % 24);
                 String textColor = player == 0
                     ? ANSI_RED
                     : ANSI_WHITE;
                 if (highlights.contains(i)) {
                     textColor += player == 0 ? ANSI_YELLOW_BACKGROUND : ANSI_BLACK + ANSI_YELLOW_BACKGROUND;
                 }
-                if (gamePiece.isKing()) {
+                if (Helpers.isKing(id)) {
                     textColor += ANSI_UNDERLINE;
                 }
                 output += ANSI_BLACK_BACKGROUND + textColor + " " + idString + " ";

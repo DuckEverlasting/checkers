@@ -9,14 +9,28 @@ public class Main {
 
     public static void main(String[] args) {
         int numOfPlayers = 0;
+        int difficulty = 0;
+        int winState = 0;
         while (numOfPlayers != 1 && numOfPlayers != 2) {
-            numOfPlayers = Integer.parseInt(System.console().readLine("\n\n\n\n\n\n\n\n\n\nNUMBER OF PLAYERS? "));
+            numOfPlayers = Integer.parseInt(System.console().readLine(
+                "\n\n\n\n\n\n\n\n\n\nNUMBER OF PLAYERS? "
+            ));
         }
-        Game game = new Game(numOfPlayers);
+        while (difficulty <= 0 || difficulty > 3) {
+            difficulty = Integer.parseInt(System.console().readLine(
+                "\n\n(1 = easy    2 = normal    3 = hard)\nDIFFICULTY? "
+            ));
+        }
+        Game game = new Game(numOfPlayers, difficulty);
         ActionFinder actionFinder = game.getActionFinder();
-        while (game.getRemainingPieces()[0] > 0 && game.getRemainingPieces()[1] > 0) {
+        while (winState == 0) {
             game.printBoard();
             Action nextAction = game.getNextAction();
+            if (nextAction.getType() == ActionType.NULL) {
+                int currentPlayer = game.getTurn() % 2;
+                winState = currentPlayer == 1 ? 1 : 2;
+                break;
+            }
             game.run(nextAction);
             if (
                 nextAction.getType() != ActionType.JUMP
@@ -26,7 +40,7 @@ public class Main {
             }
         }
         game.printBoard();
-        String victor = game.getRemainingPieces()[0] == 0 ? "WHITE" : "RED";
+        String victor = winState == 1 ? "RED" : "WHITE";
         System.out.println("GAME OVER. " + victor + " WINS.");
     }
 }

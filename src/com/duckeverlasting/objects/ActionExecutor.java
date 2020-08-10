@@ -12,57 +12,26 @@ public class ActionExecutor {
 
     public void run(Action action) {
         int[] gameBoard = game.getgameBoard();
-        int origin = action.getOrigin();
-        GamePiece toMove = game.getGamePiece(gameBoard[origin]);
-        int destination = action.getDestination();
-        gameBoard[origin] = -1;
-        gameBoard[destination] = toMove.getId();
-        toMove.setPosition(destination);
-
-        if (action.getType() == ActionType.JUMP) {
-            int target = Helpers.getBetween(origin, destination);
-            GamePiece toRemove = game.getGamePiece(gameBoard[target]);
-            gameBoard[target] = -1;
-            toRemove.setPosition(-1);
-            int[] remainingPieces = game.getRemainingPieces();
-            remainingPieces[toRemove.getPlayer()]--;
-            game.setRemainingPieces(remainingPieces);
-        }
-        if (!toMove.isKing()) {
-            if (
-                (toMove.getPosition() < 4 && toMove.getPlayer() == 0)
-                || (toMove.getPosition() > 27 && toMove.getPlayer() == 1)
-            ) {
-                toMove.setKing(true);
-            }
-        }
-        game.setGameBoard(gameBoard);
+        game.setGameBoard(getChanges(action, gameBoard));
     }
 
-    public int[] project(Action action) {
-        int[] gameBoard = game.getgameBoard();
+    public static int[] getChanges(Action action, int[] gameBoard) {
         int origin = action.getOrigin();
-        GamePiece toMove = game.getGamePiece(gameBoard[origin]);
+        int gamePiece = gameBoard[origin];
         int destination = action.getDestination();
         gameBoard[origin] = -1;
-        gameBoard[destination] = toMove.getId();
-        toMove.setPosition(destination);
+        gameBoard[destination] = gamePiece;
 
         if (action.getType() == ActionType.JUMP) {
-            int target = Helpers.getBetween(origin, destination);
-            GamePiece toRemove = game.getGamePiece(gameBoard[target]);
-            gameBoard[target] = -1;
-            toRemove.setPosition(-1);
-            int[] remainingPieces = game.getRemainingPieces();
-            remainingPieces[toRemove.getPlayer()]--;
-            game.setRemainingPieces(remainingPieces);
+            int targetGamePiece = Helpers.getBetween(origin, destination);
+            gameBoard[targetGamePiece] = -1;
         }
-        if (!toMove.isKing()) {
+        if (!Helpers.isKing(gamePiece)) {
             if (
-                (toMove.getPosition() < 4 && toMove.getPlayer() == 0)
-                || (toMove.getPosition() > 27 && toMove.getPlayer() == 1)
+                (destination < 4 && Helpers.getPlayer(gamePiece) == 0)
+                || (destination > 27 && Helpers.getPlayer(gamePiece) == 1)
             ) {
-                toMove.setKing(true);
+                gameBoard[destination] += 24;
             }
         }
         return gameBoard;

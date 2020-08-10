@@ -19,6 +19,14 @@ public class Helpers {
         return origin > 27;
     }
 
+    public static int getPlayer(int gamePieceId) {
+        return gamePieceId % 24 >= 12 ? 0 : 1;
+    }
+
+    public static boolean isKing(int gamePieceId) {
+        return gamePieceId >= 24;
+    }
+
     public static int getNeighbor(int origin, Direction direction) {
         if (origin == -1) {
             return -1;

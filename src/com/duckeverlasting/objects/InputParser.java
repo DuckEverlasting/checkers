@@ -34,12 +34,18 @@ public class InputParser {
 
     public Action parseInput(String input) {
         String[] array = input.split(" ");
-        int origin;
+        int origin = -1;
         ActionType type;
         int destination;
         try {
             int id = Integer.parseInt(array[0]);
-            origin = game.getGamePiece(id).getPosition();
+            int[] gameBoard = game.getgameBoard();
+            for (int i = 0; i < 32; i++) {
+                if (gameBoard[i] % 24 == id) {
+                    origin = i;
+                    break;
+                }
+            }
             Direction direction = directionLookup.get(array[1]);
             int neighbor = Helpers.getNeighbor(origin, direction);
             if (game.getgameBoard()[neighbor] != -1) {
@@ -50,7 +56,7 @@ public class InputParser {
                 destination = neighbor;
             }
         } catch (Exception e) {
-            return null;
+            return new Action(ActionType.NULL, -1, -1);
         }
         return new Action(type, origin, destination);
     }

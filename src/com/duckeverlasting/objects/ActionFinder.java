@@ -44,8 +44,8 @@ public class ActionFinder {
             if (gameBoard[i] == -1) {
                 continue;
             }
-            GamePiece gamePiece = game.getGamePiece(gameBoard[i]);
-            if (gamePiece.getPlayer() == player) {
+            int gamePiecePlayer = Helpers.getPlayer(gameBoard[i]);
+            if (gamePiecePlayer == player) {
                 actions.addAll(getActions(i, type, gameBoard));
             }
         }
@@ -58,8 +58,8 @@ public class ActionFinder {
         if (id == -1) {
             return actions;
         }
-        GamePiece gamePiece = game.getGamePiece(id);
-        if (gamePiece.getPlayer() == 0 || gamePiece.isKing()) {
+        int gamePiecePlayer = Helpers.getPlayer(id);
+        if (gamePiecePlayer == 0 || Helpers.isKing(id)) {
             int upLeft = Helpers.getNeighbor(origin, Direction.UP_LEFT);
             int upRight = Helpers.getNeighbor(origin, Direction.UP_RIGHT);
             int twoUpLeft = Helpers.getNeighbor(upLeft, Direction.UP_LEFT);
@@ -81,7 +81,7 @@ public class ActionFinder {
                 actions.add(actionUpLeft);
             }
         }
-        if (gamePiece.getPlayer() == 1 || gamePiece.isKing()) {
+        if (gamePiecePlayer == 1 || Helpers.isKing(id)) {
             int downLeft = Helpers.getNeighbor(origin, Direction.DOWN_LEFT);
             int downRight = Helpers.getNeighbor(origin, Direction.DOWN_RIGHT);
             int twoDownLeft = Helpers.getNeighbor(downLeft, Direction.DOWN_LEFT);

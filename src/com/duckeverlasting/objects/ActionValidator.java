@@ -14,7 +14,7 @@ public class ActionValidator {
         if (gameBoard[action.getOrigin()] == -1) {
             return false;
         }
-        GamePiece gamePiece = game.getGamePiece(gameBoard[action.getOrigin()]);
+        int gamePiecePlayer = Helpers.getPlayer(gameBoard[action.getOrigin()]);
         if (action.getType() == ActionType.MOVE) {
             if (action.getDestination() != -1 && gameBoard[action.getDestination()] == -1) {
                 return true;
@@ -24,8 +24,8 @@ public class ActionValidator {
             if (target == -1 || gameBoard[target] == -1) {
                 return false;
             }
-            GamePiece targetGamePiece = game.getGamePiece(gameBoard[target]);
-            if (targetGamePiece.getPlayer() != gamePiece.getPlayer()
+            int targetGamePiecePlayer = Helpers.getPlayer(gameBoard[target]);
+            if (targetGamePiecePlayer != gamePiecePlayer
                     && action.getDestination() != -1
                     && gameBoard[action.getDestination()] == -1) {
                 return true;

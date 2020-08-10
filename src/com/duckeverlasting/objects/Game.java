@@ -3,9 +3,11 @@ package com.duckeverlasting.objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.duckeverlasting.enums.ActionType;
+
 public class Game {
     private final int               numOfPlayers;
-    private final GamePiece[]       gamePieces;
+    private final int               difficulty;
     private final ActionFinder      actionFinder;
     private final ActionExecutor    actionExecutor;
     private final ActionValidator   actionValidator;
@@ -13,29 +15,25 @@ public class Game {
     private final InputParser       inputParser;
     private final Printer           printer;
     private int[]                   gameBoard;
-    private int[]                   remainingPieces;
     private int                     turn;
 
-    public Game(int numOfPlayers) {
+    public Game(int numOfPlayers, int difficulty) {
         this.numOfPlayers = numOfPlayers;
+        this.difficulty = difficulty;
         gameBoard = new int[32];
         turn = 0;
-        remainingPieces = new int[] { 12, 12 };
-        gamePieces = new GamePiece[24];
         actionFinder = new ActionFinder(this);
         actionExecutor = new ActionExecutor(this);
         actionValidator = new ActionValidator(this);
-        gamePlayer = new GamePlayer(this);
+        gamePlayer = new GamePlayer(this, difficulty);
         inputParser = new InputParser(this);
         printer = new Printer(this);
         // set up gameBoard
         for (int i = 0; i < 12; i++) {
-            gamePieces[i] = new GamePiece(i, 1, i);
             gameBoard[i] = i;
         }
         Arrays.fill(gameBoard, 12, 20, -1);
         for (int i = 12; i < 24; i++) {
-            gamePieces[i] = new GamePiece(i, 0, i + 8);
             gameBoard[i + 8] = i;
         }
     }
@@ -48,24 +46,12 @@ public class Game {
         this.gameBoard = gameBoard;
     }
 
-    public GamePiece getGamePiece(int id) {
-        return gamePieces[id];
-    }
-
     public int getTurn() {
         return turn;
     }
 
     public void endTurn() {
         turn++;
-    }
-
-    public int[] getRemainingPieces() {
-        return remainingPieces.clone();
-    }
-
-    public void setRemainingPieces(int[] remainingPieces) {
-        this.remainingPieces = remainingPieces;
     }
 
     public ActionFinder getActionFinder() {
@@ -100,7 +86,7 @@ public class Game {
         System.out.println(actions.size() + " MOVES AVAILABLE.");
         String input = System.console().readLine("YOUR MOVE, " + (currentPlayer == 0 ? "RED" : "WHITE") + ": ");
         Action parsedAction = inputParser.parseInput(input);
-        if (parsedAction == null) {
+        if (parsedAction.getType() == ActionType.NULL) {
             ArrayList<Integer> highlights = new ArrayList<>();
             for (Action action : actions) {
                 highlights.add(action.getOrigin());
