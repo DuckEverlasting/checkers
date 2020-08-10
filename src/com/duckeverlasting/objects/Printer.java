@@ -49,7 +49,7 @@ public class Printer {
                 if (Helpers.isKing(id)) {
                     textColor += ANSI_UNDERLINE;
                 }
-                output += ANSI_BLACK_BACKGROUND + textColor + " " + idString + " ";
+                output += ANSI_BLACK_BACKGROUND + textColor + " " + idString + " " + ANSI_RESET;
             }
 
             if (i % 8 >= 4) {
