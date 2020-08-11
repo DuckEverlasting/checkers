@@ -45,4 +45,9 @@ public class GamePlayer {
         }
         return actions.get(random.nextInt(actions.size()));
     }
+
+    private ArrayList<ChainAction> chainJumpAction(Action jumpAction) {
+        ArrayList<ChainAction> actionChain = new ArrayList<>();
+        return actionChain;
+    }
 }
