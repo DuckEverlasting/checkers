@@ -46,13 +46,23 @@ public class ActionFinder {
             }
             int gamePiecePlayer = Helpers.getPlayer(gameBoard[i]);
             if (gamePiecePlayer == player) {
-                actions.addAll(getActions(i, type, gameBoard));
+                actions.addAll(getActions(type, i, gameBoard));
             }
         }
         return actions;
     }
 
-    public ArrayList<Action> getActions(int origin, ActionType type, int[] gameBoard) {
+    private Action getActionInDir(ActionType type, int origin, Direction direction) {
+        int oneStep = Helpers.getNeighbor(origin, direction);
+        int twoSteps = Helpers.getNeighbor(oneStep, direction);
+        return new Action(
+            type,
+            origin,
+            type == ActionType.JUMP ? twoSteps : oneStep
+        );
+    }
+
+    public ArrayList<Action> getActions(ActionType type, int origin, int[] gameBoard) {
         ArrayList<Action> actions = new ArrayList<>();
         int id = gameBoard[origin];
         if (id == -1) {
@@ -60,45 +70,21 @@ public class ActionFinder {
         }
         int gamePiecePlayer = Helpers.getPlayer(id);
         if (gamePiecePlayer == 0 || Helpers.isKing(id)) {
-            int upLeft = Helpers.getNeighbor(origin, Direction.UP_LEFT);
-            int upRight = Helpers.getNeighbor(origin, Direction.UP_RIGHT);
-            int twoUpLeft = Helpers.getNeighbor(upLeft, Direction.UP_LEFT);
-            int twoUpRight = Helpers.getNeighbor(upRight, Direction.UP_RIGHT);
-            Action actionUpRight = new Action(
-                type,
-                origin,
-                type == ActionType.JUMP ? twoUpRight : upRight
-            );
+            Action actionUpRight = getActionInDir(type, origin, Direction.UP_RIGHT);
             if (game.getActionValidator().isValidAction(actionUpRight)) {
                 actions.add(actionUpRight);
             }
-            Action actionUpLeft = new Action(
-                type,
-                origin,
-                type == ActionType.JUMP ? twoUpLeft : upLeft
-            );
+            Action actionUpLeft = getActionInDir(type, origin, Direction.UP_LEFT);
             if (game.getActionValidator().isValidAction(actionUpLeft)) {
                 actions.add(actionUpLeft);
             }
         }
         if (gamePiecePlayer == 1 || Helpers.isKing(id)) {
-            int downLeft = Helpers.getNeighbor(origin, Direction.DOWN_LEFT);
-            int downRight = Helpers.getNeighbor(origin, Direction.DOWN_RIGHT);
-            int twoDownLeft = Helpers.getNeighbor(downLeft, Direction.DOWN_LEFT);
-            int twoDownRight = Helpers.getNeighbor(downRight, Direction.DOWN_RIGHT);
-            Action actionDownRight = new Action(
-                type,
-                origin,
-                type == ActionType.JUMP ? twoDownRight : downRight
-            );
+            Action actionDownRight = getActionInDir(type, origin, Direction.DOWN_RIGHT);
             if (game.getActionValidator().isValidAction(actionDownRight)) {
                 actions.add(actionDownRight);
             }
-            Action actionDownLeft = new Action(
-                type,
-                origin,
-                type == ActionType.JUMP ? twoDownLeft : downLeft
-            );
+            Action actionDownLeft = getActionInDir(type, origin, Direction.DOWN_LEFT);
             if (game.getActionValidator().isValidAction(actionDownLeft)) {
                 actions.add(actionDownLeft);
             }
@@ -106,8 +92,8 @@ public class ActionFinder {
         return actions;
     }
 
-    public ArrayList<Action> getActions(int origin, ActionType type) {
-        return getActions(origin, type, game.getgameBoard());
+    public ArrayList<Action> getActions(ActionType type, int origin) {
+        return getActions(type, origin, game.getgameBoard());
     }
 
 }

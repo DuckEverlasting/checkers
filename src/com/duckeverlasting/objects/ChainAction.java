@@ -1,20 +1,20 @@
 package com.duckeverlasting.objects;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import com.duckeverlasting.enums.ActionType;
 
 public class ChainAction implements GameAction{
-    private ActionType  type;
-    private int         origin;
-    private int[]       destinations;
-    private int         value;
+    private ActionType          type;
+    private int                 origin;
+    private ArrayList<Integer>  destinations;
+    private int                 value;
 
-    public ChainAction(ActionType type, int origin, int[] destinations) {
+    public ChainAction(ActionType type, int origin, ArrayList<Integer> destinations) {
         this.type = type;
         this.origin = origin;
         this.destinations = destinations;
-        value = destinations.length;
+        value = destinations.size();
     }
 
     @Override
@@ -27,8 +27,8 @@ public class ChainAction implements GameAction{
         return this.origin;
     }
 
-    public int[] getDestinations() {
-        return this.destinations;
+    public ArrayList<Integer> getDestinations() {
+        return new ArrayList<>(this.destinations);
     }
     
     @Override
@@ -43,10 +43,7 @@ public class ChainAction implements GameAction{
         }
         return action.getType() == type
             && action.getOrigin() == origin
-            && Arrays.equals(
-                ((ChainAction) action).getDestinations(),
-                destinations
-            );
+            && destinations.equals(((ChainAction) action).getDestinations());
     }
 
     @Override
