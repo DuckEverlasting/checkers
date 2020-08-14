@@ -6,7 +6,7 @@ public class Action implements GameAction{
     private ActionType  type;
     private int         origin;
     private int         destination;
-    private int         value;       
+    private int         value;
 
     public Action(ActionType type, int origin, int destination) {
         this.type = type;

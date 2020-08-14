@@ -80,7 +80,7 @@ public class Game {
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {}
-            return gamePlayer.getOptimalAction(getgameBoard());
+            return gamePlayer.planAhead(difficulty);
         }
         ArrayList<Action> actions = actionFinder.getAllActions(currentPlayer);
         System.out.println(actions.size() + " MOVES AVAILABLE.");

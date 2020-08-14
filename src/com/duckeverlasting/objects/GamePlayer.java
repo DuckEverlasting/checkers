@@ -29,86 +29,43 @@ public class GamePlayer {
         return actions.get(random.nextInt(actions.size()));
     }
 
-    public Action getOptimalAction(int[] board) {
+    public Action planAhead(int steps) {
         if (actionQueue.size() > 0) {
             return actionQueue.poll();
         }
+
         int player = game.getTurn() % 2;
-        // boolean isCurrentPlayer = true;
-        ArrayList<Action> firstActions = game.getActionFinder().getAllActions(player, board);
-        ArrayList<GameAction> allActions = new ArrayList<>();
-        firstActions.forEach((action) -> {
-            if (action.getType() == ActionType.JUMP) {
-                allActions.addAll(getJumpChains(action));
-            } else if (action.getType() == ActionType.MOVE) {
-                allActions.add(action);
-            }
-        });
-        ArrayList<GameAction> bestActions = new ArrayList<GameAction>();
-        int bestValue = allActions.get(0).getValue();
-        for (GameAction action : allActions) {
-            if (bestValue == action.getValue()) {
-                bestActions.add(action);
-            } else if (bestValue < action.getValue()) {
-                bestActions.clear();
-                bestActions.add(action);
-            }
-        }
-        // isCurrentPlayer = !isCurrentPlayer;
-        GameAction choice = bestActions.get(random.nextInt(bestActions.size()));
-        if (choice.getType() == ActionType.CHAIN_JUMP) {
-            ChainAction chainChoice = (ChainAction)choice;
-            Action next = new Action(
-                ActionType.JUMP,
-                chainChoice.getOrigin(),
-                chainChoice.getDestinations().get(0)
-            );
-            for (int i = 1; i < chainChoice.getDestinations().size(); i++) {
-                actionQueue.add(new Action(
-                    ActionType.JUMP,
-                    chainChoice.getDestinations().get(i - 1),
-                    chainChoice.getDestinations().get(i)
-                ));
-            }
-            return next;
-        } else {
-            return (Action)choice; 
-        }
+
+        ArrayList<ArrayList<GameAction>> allPaths = new ArrayList<>();
+        LinkedList<ArrayList<int[]>> queue = new LinkedList<>();
+        // ArrayList<GameAction> bestActions = new ArrayList<GameAction>();
+        // int bestValue = allActions.get(0).getValue();
+        // for (GameAction action : allActions) {
+        //     if (bestValue == action.getValue()) {
+        //         bestActions.add(action);
+        //     } else if (bestValue < action.getValue()) {
+        //         bestActions.clear();
+        //         bestActions.add(action);
+        //     }
+        // }
+        // GameAction choice = bestActions.get(random.nextInt(bestActions.size()));
+        // if (choice.getType() == ActionType.CHAIN_JUMP) {
+        //     ChainAction chainChoice = (ChainAction)choice;
+        //     queueChainAction(chainChoice);
+        //     return new Action(ActionType.JUMP, chainChoice.getOrigin(), chainChoice.getDestinations().get(0));
+        // } else {
+        //     return (Action)choice; 
+        // }
+        return new Action(ActionType.NULL, -1, -1);
     }
 
-    private ArrayList<ChainAction> getJumpChains(Action jumpAction) {
-        ArrayList<ChainAction> chainActions = new ArrayList<>();
-        Queue<ArrayList<Integer>> pathQueue = new LinkedList<>();
-        Queue<int[]> boardQueue = new LinkedList<>();
-        ArrayList<Integer> initialPath = new ArrayList<>();
-        initialPath.add(jumpAction.getDestination());
-        pathQueue.add(initialPath);
-        boardQueue.add(ActionExecutor.getChanges(jumpAction, game.getgameBoard()));
-        while (pathQueue.size() > 0) {
-            ArrayList<Integer> currentPath = pathQueue.poll();
-            int[] currentBoard = boardQueue.poll();
-            ArrayList<Action> nextActions = game.getActionFinder().getActions(
+    private void queueChainAction(ChainAction action) {
+        for (int i = 1; i < action.getDestinations().size(); i++) {
+            actionQueue.add(new Action(
                 ActionType.JUMP,
-                currentPath.get(currentPath.size() - 1),
-                currentBoard
-            );
-            if (nextActions.size() > 0) {
-                nextActions.forEach((Action action) -> {
-                    ArrayList<Integer> newPath = new ArrayList<>(currentPath);
-                    int[] newBoard = ActionExecutor.getChanges(action, currentBoard);
-                    newPath.add(action.getDestination());
-                    pathQueue.add(newPath);
-                    boardQueue.add(newBoard);
-                });
-            } else {
-                ChainAction chainAction = new ChainAction(
-                    ActionType.CHAIN_JUMP,
-                    jumpAction.getOrigin(),
-                    currentPath
-                );
-                chainActions.add(chainAction);
-            }
+                action.getDestinations().get(i - 1),
+                action.getDestinations().get(i)
+            ));
         }
-        return chainActions;
     }
 }
