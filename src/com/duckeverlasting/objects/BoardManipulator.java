@@ -5,19 +5,14 @@ import java.util.ArrayList;
 import com.duckeverlasting.Helpers;
 import com.duckeverlasting.enums.ActionType;
 
-public class ActionExecutor {
-    private final Game  game;
-
-    public ActionExecutor(Game game) {
-        this.game = game;
+public class BoardManipulator {
+    public int[] getChanges(GameAction action, int[] gameBoard) {
+        return action.getType() == ActionType.CHAIN_JUMP
+            ? getChanges((ChainAction)action, gameBoard)
+            : getChanges((Action)action, gameBoard);
     }
 
-    public void run(Action action) {
-        int[] gameBoard = game.getgameBoard();
-        game.setGameBoard(getChanges(action, gameBoard));
-    }
-
-    public static int[] getChanges(Action action, int[] gameBoard) {
+    public int[] getChanges(Action action, int[] gameBoard) {
         int origin = action.getOrigin();
         int gamePiece = gameBoard[origin];
         int destination = action.getDestination();
@@ -29,18 +24,16 @@ public class ActionExecutor {
             int targetGamePiece = Helpers.getBetween(origin, destination);
             resGameBoard[targetGamePiece] = -1;
         }
-        if (!Helpers.isKing(gamePiece)) {
-            if (
-                (destination < 4 && Helpers.getPlayer(gamePiece) == 0)
-                || (destination > 27 && Helpers.getPlayer(gamePiece) == 1)
-            ) {
-                resGameBoard[destination] += 24;
-            }
+        if (
+            !Helpers.isKing(gamePiece) 
+            && Helpers.willBeKing(gamePiece, destination)
+        ) {
+            resGameBoard[destination] += 24;
         }
         return resGameBoard;
     }
 
-    public static int[] getChanges(ChainAction action, int[] gameBoard) {
+    public int[] getChanges(ChainAction action, int[] gameBoard) {
         int origin = action.getOrigin();
         int gamePiece = gameBoard[origin];
         ArrayList<Integer> destinations = action.getDestinations();

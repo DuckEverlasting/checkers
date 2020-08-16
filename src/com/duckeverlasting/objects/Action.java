@@ -38,6 +38,12 @@ public class Action implements GameAction{
     public int getDestination() {
         return this.destination;
     }
+
+        
+    @Override
+    public int getFinalDestination() {
+        return this.destination;
+    }
     
     @Override
     public int getValue() {

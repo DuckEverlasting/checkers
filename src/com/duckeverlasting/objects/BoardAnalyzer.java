@@ -18,43 +18,16 @@ import com.duckeverlasting.enums.ActionType;
  */
 
 
-public class BoardAnalysis {
-    private final Game                  game;
-    private final int[]                 board;
-    private final int                   stepsAhead;
-    private final ArrayList<GameAction> possibleMoves;
+public class BoardAnalyzer {
+    ActionFinder actionFinder = new ActionFinder();
+    BoardManipulator manipulator = new BoardManipulator();
 
-    BoardAnalysis(Game game, int[] board, int stepsAhead) {
-        this.game = game;
-        this.board = board;
-        this.stepsAhead = stepsAhead;
-        this.possibleMoves = new ArrayList<GameAction>();
-        int player = (game.getTurn() + stepsAhead) % 2;
-        this.possibleMoves.addAll(calculatePossibleMoves(board, player));
-    }
-
-    public Game getGame() {
-        return this.game;
-    }
-
-    public int[] getBoard() {
-        return this.board.clone();
-    }
-
-    public int getStepsAhead() {
-        return this.stepsAhead;
-    }
-
-    public ArrayList<GameAction> getPossibleMoves() {
-        return new ArrayList<>(this.possibleMoves);
-    }
-
-    private ArrayList<GameAction> calculatePossibleMoves(int[] board, int player) {
-        ArrayList<Action> firstActions = game.getActionFinder().getAllActions(player, board);
+    public ArrayList<GameAction> calculatePossibleMoves(int player, int[] board) {
+        ArrayList<Action> firstActions = actionFinder.getAllActions(player, board);
         ArrayList<GameAction> allActions = new ArrayList<>();
         firstActions.forEach((action) -> {
             if (action.getType() == ActionType.JUMP) {
-                allActions.addAll(getJumpChains(action));
+                allActions.addAll(getJumpChains(action, board));
             } else if (action.getType() == ActionType.MOVE) {
                 allActions.add(action);
             }
@@ -62,18 +35,18 @@ public class BoardAnalysis {
         return allActions;
     }
 
-    private ArrayList<ChainAction> getJumpChains(Action jumpAction) {
+    private ArrayList<ChainAction> getJumpChains(Action jumpAction, int[] board) {
         ArrayList<ChainAction> chainActions = new ArrayList<>();
         Queue<ArrayList<Integer>> pathQueue = new LinkedList<>();
         Queue<int[]> boardQueue = new LinkedList<>();
         ArrayList<Integer> initialPath = new ArrayList<>();
         initialPath.add(jumpAction.getDestination());
         pathQueue.add(initialPath);
-        boardQueue.add(ActionExecutor.getChanges(jumpAction, game.getgameBoard()));
+        boardQueue.add(manipulator.getChanges(jumpAction, board));
         while (pathQueue.size() > 0) {
             ArrayList<Integer> currentPath = pathQueue.poll();
             int[] currentBoard = boardQueue.poll();
-            ArrayList<Action> nextActions = game.getActionFinder().getActions(
+            ArrayList<Action> nextActions = actionFinder.getActions(
                 ActionType.JUMP,
                 currentPath.get(currentPath.size() - 1),
                 currentBoard
@@ -81,7 +54,7 @@ public class BoardAnalysis {
             if (nextActions.size() > 0) {
                 nextActions.forEach((Action action) -> {
                     ArrayList<Integer> newPath = new ArrayList<>(currentPath);
-                    int[] newBoard = ActionExecutor.getChanges(action, currentBoard);
+                    int[] newBoard = manipulator.getChanges(action, currentBoard);
                     newPath.add(action.getDestination());
                     pathQueue.add(newPath);
                     boardQueue.add(newBoard);
@@ -96,5 +69,9 @@ public class BoardAnalysis {
             }
         }
         return chainActions;
+    }
+
+    public BoardManipulator getManipulator() {
+        return manipulator;
     }
 }

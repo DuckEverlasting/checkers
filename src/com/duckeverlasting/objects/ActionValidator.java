@@ -4,13 +4,7 @@ import com.duckeverlasting.Helpers;
 import com.duckeverlasting.enums.ActionType;
 
 public class ActionValidator {
-    private final Game  game;
-
-    public ActionValidator(Game game) {
-        this.game = game;
-    }
-
-    public boolean isValidAction(Action action, int[] gameBoard) {
+    public static boolean isValidAction(Action action, int[] gameBoard) {
         if (gameBoard[action.getOrigin()] == -1) {
             return false;
         }
@@ -32,9 +26,5 @@ public class ActionValidator {
             }
         }
         return false;
-    }
-
-    public boolean isValidAction(Action action) {
-        return isValidAction(action, game.getgameBoard());
     }
 }

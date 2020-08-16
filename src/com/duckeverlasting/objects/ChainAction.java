@@ -32,6 +32,11 @@ public class ChainAction implements GameAction{
     }
     
     @Override
+    public int getFinalDestination() {
+        return this.destinations.get(this.destinations.size() - 1);
+    }
+
+    @Override
     public int getValue() {
         return this.value;
     }

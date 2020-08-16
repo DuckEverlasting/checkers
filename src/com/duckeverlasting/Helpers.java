@@ -27,6 +27,11 @@ public class Helpers {
         return gamePieceId >= 24;
     }
 
+    public static boolean willBeKing(int gamePieceId, int destination) {
+        return (destination < 4 && getPlayer(gamePieceId) == 0)
+        || (destination > 27 && getPlayer(gamePieceId) == 1);
+    }
+
     public static int getNeighbor(int origin, Direction direction) {
         if (origin == -1) {
             return -1;

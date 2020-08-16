@@ -6,5 +6,6 @@ public interface GameAction {
     public ActionType   getType();
     public int          getOrigin();
     public int          getValue();
+    public int          getFinalDestination();
     public boolean      isEqualTo(GameAction action);
 }

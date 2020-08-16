@@ -34,7 +34,11 @@ public class Main {
             game.run(nextAction);
             if (
                 nextAction.getType() != ActionType.JUMP
-                || actionFinder.getActions(ActionType.JUMP, nextAction.getDestination()).size() == 0
+                || actionFinder.getActions(
+                    ActionType.JUMP,
+                    nextAction.getDestination(),
+                    game.getgameBoard()
+                ).size() == 0
             ) {
                 game.endTurn();
             }

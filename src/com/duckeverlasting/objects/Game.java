@@ -9,8 +9,7 @@ public class Game {
     private final int               numOfPlayers;
     private final int               difficulty;
     private final ActionFinder      actionFinder;
-    private final ActionExecutor    actionExecutor;
-    private final ActionValidator   actionValidator;
+    private final BoardExecutor    actionExecutor;
     private final GamePlayer        gamePlayer;
     private final InputParser       inputParser;
     private final Printer           printer;
@@ -22,9 +21,8 @@ public class Game {
         this.difficulty = difficulty;
         gameBoard = new int[32];
         turn = 0;
-        actionFinder = new ActionFinder(this);
-        actionExecutor = new ActionExecutor(this);
-        actionValidator = new ActionValidator(this);
+        actionFinder = new ActionFinder();
+        actionExecutor = new BoardExecutor(this);
         gamePlayer = new GamePlayer(this, difficulty);
         inputParser = new InputParser(this);
         printer = new Printer(this);
@@ -58,10 +56,6 @@ public class Game {
         return actionFinder;
     }
 
-    public ActionValidator getActionValidator() {
-        return actionValidator;
-    }
-
     public void run(Action action) {
         actionExecutor.run(action);
     }
@@ -77,12 +71,9 @@ public class Game {
     public Action getNextAction() {
         int currentPlayer = turn % 2;
         if (currentPlayer == 1 && numOfPlayers == 1) {
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {}
             return gamePlayer.planAhead(difficulty);
         }
-        ArrayList<Action> actions = actionFinder.getAllActions(currentPlayer);
+        ArrayList<Action> actions = actionFinder.getAllActions(currentPlayer, getgameBoard());
         System.out.println(actions.size() + " MOVES AVAILABLE.");
         String input = System.console().readLine("YOUR MOVE, " + (currentPlayer == 0 ? "RED" : "WHITE") + ": ");
         Action parsedAction = inputParser.parseInput(input);

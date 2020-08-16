@@ -7,10 +7,10 @@ import com.duckeverlasting.enums.ActionType;
 import com.duckeverlasting.enums.Direction;
 
 public class ActionFinder {
-    private final Game  game;
+    private final ActionValidator  validator;
 
-    public ActionFinder(Game game) {
-        this.game = game;
+    public ActionFinder() {
+        this.validator = new ActionValidator();
     }
 
     public ArrayList<Action> getAllActions(int player, int[] gameBoard) {
@@ -26,16 +26,8 @@ public class ActionFinder {
         return actions;
     }
 
-    public ArrayList<Action> getAllActions(int player, int[] gameBoard, ActionType type) {
+    public ArrayList<Action> getAllActions(int player, ActionType type, int[] gameBoard) {
         return getAllActionsOfType(player, type, gameBoard);
-    }
-    
-    public ArrayList<Action> getAllActions(int player, ActionType type) {
-        return getAllActionsOfType(player, type, game.getgameBoard());
-    }
-
-    public ArrayList<Action> getAllActions(int player) {
-        return getAllActions(player, game.getgameBoard());
     }
 
     private ArrayList<Action> getAllActionsOfType(int player, ActionType type, int[] gameBoard) {
@@ -71,29 +63,24 @@ public class ActionFinder {
         int gamePiecePlayer = Helpers.getPlayer(id);
         if (gamePiecePlayer == 0 || Helpers.isKing(id)) {
             Action actionUpRight = getActionInDir(type, origin, Direction.UP_RIGHT);
-            if (game.getActionValidator().isValidAction(actionUpRight)) {
+            if (validator.isValidAction(actionUpRight, gameBoard)) {
                 actions.add(actionUpRight);
             }
             Action actionUpLeft = getActionInDir(type, origin, Direction.UP_LEFT);
-            if (game.getActionValidator().isValidAction(actionUpLeft)) {
+            if (validator.isValidAction(actionUpLeft, gameBoard)) {
                 actions.add(actionUpLeft);
             }
         }
         if (gamePiecePlayer == 1 || Helpers.isKing(id)) {
             Action actionDownRight = getActionInDir(type, origin, Direction.DOWN_RIGHT);
-            if (game.getActionValidator().isValidAction(actionDownRight)) {
+            if (validator.isValidAction(actionDownRight, gameBoard)) {
                 actions.add(actionDownRight);
             }
             Action actionDownLeft = getActionInDir(type, origin, Direction.DOWN_LEFT);
-            if (game.getActionValidator().isValidAction(actionDownLeft)) {
+            if (validator.isValidAction(actionDownLeft, gameBoard)) {
                 actions.add(actionDownLeft);
             }
         }
         return actions;
     }
-
-    public ArrayList<Action> getActions(ActionType type, int origin) {
-        return getActions(type, origin, game.getgameBoard());
-    }
-
 }
